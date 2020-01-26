@@ -324,14 +324,13 @@ class HasuraConnectBase implements HasuraConnect {
         }
         if (json.containsKey("errors")) {
           throw HasuraError.fromJson(json["errors"][0]);
-          return json["errors"][0];
         }
         return json;
       } else {
-        throw HasuraError("connection error", null);
+        throw HasuraError(response.body, null);
       }
     } catch (r) {
-      throw HasuraError("connection error", null);
+      rethrow;
     } finally {
       client.close();
     }
@@ -341,8 +340,6 @@ class HasuraConnectBase implements HasuraConnect {
   void dispose() async {
     _disconnect();
     _snapmap.clear();
-    await _localStorageMutation.close();
-    await _localStorageCache.close();
     await _controller.close();
   }
 }
